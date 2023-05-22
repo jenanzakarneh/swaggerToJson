@@ -22,7 +22,7 @@ const convertItem = (value) => {
   if (isPrimitive(value[1]) || value.length === 1)
     return value[1]
       ? { type: typeof value[1], example: value[1] }
-      : { type: typeof value, example: value };
+      :value
   if (Array.isArray(value[1]))
     return { type: "list", items: converArray(value[1]) };
   myObject = {};
@@ -38,7 +38,7 @@ const isPrimitive = (inputValue) => {
 const converArray = (arr) => {
   items = [];
   arr.forEach((a) => {
-    // console.log("itemmm>>",a)
+    
     items.push(convertItem(a));
   });
   return items;
@@ -48,16 +48,15 @@ const convertObject = (object, result) => {
   propereties.forEach((p) => {
     propConverted = convertItem(p);
     result[p[0]] = propConverted;
-    // console.log("result>>>",result)
+   
   });
   return result;
 };
 const jsonAsOject = JSON.parse(json);
-// console.log(jsonAsOject);
+
 const swagger = {};
 convertObject(jsonAsOject, swagger);
-// console.log("Swagger converted to json = ", swagger);
-// console.log("Swagger as json : ", JSON.stringify(swagger));
+
 console.log("You entered this json response :",json);
 console.log("\nConverting to Swagger\n");
 console.log("Result is :-\n");
