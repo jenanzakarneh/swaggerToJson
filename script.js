@@ -1,30 +1,36 @@
-const json = `{
-    "id": 10,
-    "name": "doggie",
-    "category": {
-      "id": 1,
-      "name": "Dogs"
+const json = {
+  data: [
+    {
+      type: "articles",
+      id: "1",
+      attributes: {
+        title: "JSON:API paints my bikeshed!",
+        body: "The shortest article. Ever.",
+      },
+      relationships: {
+        author: {
+          data: { id: "42", type: "people" },
+        },
+      },
     },
-    "photoUrls": [
-      "string"
-    ],
-    "tags": [
-      {
-        "id": 0,
-        "name": "string"
-      }
-    ],
-    "status": "available"
-  }`;
+  ],
+  included: [
+    {
+      type: "people",
+      id: "42",
+      attributes: {
+        name: "John",
+      },
+    },
+  ],
+};
 const convertItem = (value) => {
-  //[name,value] || pr
+  //[name,value] || pr[]
 
-  if (isPrimitive(value[1]) || value.length === 1)
-    return value[1]
-      ? { type: typeof value[1], example: value[1] }
-      :value
-  if (Array.isArray(value[1]))
-    return { type: "list", items: converArray(value[1]) };
+  if (isPrimitive(value[1]))
+    return { type: typeof value[1], example: value[1] };
+  if (value[1] instanceof Array)
+    return { type: "array", items: convertObject(value[1], {}) };
   myObject = {};
   return {
     type: typeof value[1],
@@ -36,10 +42,9 @@ const isPrimitive = (inputValue) => {
   return !(inputValue === Object(inputValue));
 };
 const converArray = (arr) => {
-  items = [];
+  items = {};
   arr.forEach((a) => {
-    
-    items.push(convertItem(a));
+    items[a] = convertItem(a);
   });
   return items;
 };
@@ -47,17 +52,17 @@ const convertObject = (object, result) => {
   const propereties = Object.entries(object);
   propereties.forEach((p) => {
     propConverted = convertItem(p);
-    result[p[0]] = propConverted;
-   
+    object instanceof Array
+      ? Object.assign(result, propConverted)
+      : (result[p[0]] = propConverted);
   });
   return result;
 };
-const jsonAsOject = JSON.parse(json);
 
 const swagger = {};
-convertObject(jsonAsOject, swagger);
+convertObject(json, swagger);
 
-console.log("You entered this json response :",json);
+console.log("You entered this json response :", json);
 console.log("\nConverting to Swagger\n");
 console.log("Result is :-\n");
 console.log(JSON.stringify(swagger, null, 2));
