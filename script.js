@@ -41,13 +41,6 @@ const convertItem = (value) => {
 const isPrimitive = (inputValue) => {
   return !(inputValue === Object(inputValue));
 };
-const converArray = (arr) => {
-  items = {};
-  arr.forEach((a) => {
-    items[a] = convertItem(a);
-  });
-  return items;
-};
 const convertObject = (object, result) => {
   const propereties = Object.entries(object);
   propereties.forEach((p) => {
